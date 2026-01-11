@@ -1,68 +1,442 @@
-# NOTE: DO NOT FORK THIS REPOSITORY. CLONE AND SETUP A STANDALONE REPOSITORY.
+# TODO Application - Adbrew Assignment
 
-# Adbrew Test!
+A full-stack TODO application built with React, Django, and MongoDB. Features real-time todo management with a clean, responsive UI.
 
-Hello! This test is designed to specifically test your Python, React and web development skills. The task is unconventional and has a slightly contrived setup on purpose and requires you to learn basic concepts of Docker on the fly. 
+## 📋 Table of Contents
 
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Prerequisites](#prerequisites)
+- [Project Structure](#project-structure)
+- [Installation & Setup](#installation--setup)
+- [Running the Application](#running-the-application)
+- [API Documentation](#api-documentation)
+- [Usage Guide](#usage-guide)
+- [Testing](#testing)
+- [Database Management](#database-management)
 
-# Structure
+## ✨ Features
 
-This repository includes code for a Docker setup with 3 containers:
-* App: This is the React dev server and runs on http://localhost:3000. The code for this resides in src/app directory.
-* API: This is the backend container that run a Django instance on http://localhost:8000. 
-* Mongo: This is a DB instance running on port 27017. Django views already have code written to connect to this instance of Mongo.
+- ✅ Create TODO items with descriptions
+- ✅ View all TODOs in real-time
+- ✅ Automatic list refresh after creating new TODO
+- ✅ Clean, responsive UI with error handling
+- ✅ MongoDB persistence
+- ✅ RESTful API with proper validation
+- ✅ Docker containerization for easy deployment
 
-We highly recommend you go through the setup in `Dockerfile` and `docker-compose.yml`. If you are able to understand and explain the setup, that will be a huge differentiator.
+## 🛠️ Tech Stack
 
-# Setup
-1. Clone this repository (DO NOT FORK)
+### Frontend
+- **React 18** - UI library with Hooks
+- **React Hooks** - State management (`useState`, `useEffect`, `useCallback`)
+- **CSS3** - Responsive styling with animations
+
+### Backend
+- **Django 3.x** - Web framework
+- **Django REST Framework** - API development
+- **django-cors-headers** - CORS support
+
+### Database
+- **MongoDB** - NoSQL database
+- **PyMongo** - MongoDB Python driver
+
+### DevOps
+- **Docker** - Containerization
+- **Docker Compose** - Multi-container orchestration
+
+## 📦 Prerequisites
+
+Before you begin, ensure you have:
+
+- **Docker** (version 20.10+)
+- **Docker Compose** (version 1.29+)
+- **Git**
+- **VS Code** (optional but recommended)
+- **Node.js 16+** (for local development without Docker)
+- **Python 3.8+** (for local development without Docker)
+
+### Installation
+
+**Windows:**
+```powershell
+# Download and install Docker Desktop from:
+# https://www.docker.com/products/docker-desktop
+
+# Verify installation:
+docker --version
+docker-compose --version
 ```
-git clone https://github.com/adbrew/test.git
-```
-2. Change into the cloned directory and set the environment variable for the code path. Replace `path_to_repository` appropriately.
-```
-export ADBREW_CODEBASE_PATH="{path_to_repository}/test/src"
-```
-3. Build container (you only need to build containers for the first time or if you change image definition, i.e., `Dockerfile`). This step will take a good amount of time.
-```
-docker-compose build
-```
-4. Once the build is completed, start the containers:
-```
-docker-compose up -d
-```
-5. Once complete, `docker ps` should output something like this:
-```
-CONTAINER ID   IMAGE               COMMAND                  CREATED         STATUS         PORTS                      NAMES
-e445be7efa61   adbrew_test_api     "bash -c 'cd /src/re…"   3 minutes ago   Up 2 seconds   0.0.0.0:8000->8000/tcp     api
-0fd203f12d8a   adbrew_test_app     "bash -c 'cd /src/ap…"   4 minutes ago   Up 3 minutes   0.0.0.0:3000->3000/tcp     app
-884cb9296791   adbrew_test_mongo   "/usr/bin/mongod --b…"   4 minutes ago   Up 3 minutes   0.0.0.0:27017->27017/tcp   mongo
-```
-6. Check that you are able to access http://localhost:3000 and http://localhost:8000/todos
-7. If the containers in #5 or #6 are not up, we would like you to use your debugging skills to figure out the issue. Only reach out to us if you've exhausted all possible options. The `app` container may take a good amount of time to start since it will download all package dependencies.
 
-# Tips
-1. Once containers are up and running, you can view container logs by executing `docker logs -f --tail=100 {container_name}` Replace `container_name` with `app` or `api`(output of `docker ps`)
-2. You can enter the container and inspect it by executing `docker exec -it {container_name} bash` Replace `{container_name}` with `app` or `api` (output of `docker ps`)
-3. Shut all containers using `docker-compose down`
-4. Restart a container using `docker restart {container_name}`
+**macOS/Linux:**
+```bash
+# Using Homebrew (macOS)
+brew install docker docker-compose
 
+# Or follow: https://docs.docker.com/install/
+```
 
-# Task
+## 📁 Project Structure
 
-When you run `localhost:3000`, you would see 2 things:
-1. A form with a TODO description textbox and a submit button. On this form submission, the app should interact with the Django backend (`POST http://localhost:8000/todos`) and create a TODO in MongoDB.
-2. A list with hardcoded TODOs. This should be changed to reflect TODOs in the backend (`GET http://localhost:8000/todos`). 
-3. When the form is submitted, the TODO list should refresh again and fetch latest list of TODOs from MongoDB.
+```
+adb_test/
+├── src/
+│   ├── app/                          # React Frontend
+│   │   ├── public/
+│   │   ├── src/
+│   │   │   ├── App.js               # Main App component
+│   │   │   ├── App.css              # Styling
+│   │   │   ├── index.js             # Entry point
+│   │   │   └── logo.svg
+│   │   ├── package.json             # React dependencies
+│   │   ├── Dockerfile              # React container config
+│   │   └── .gitignore
+│   │
+│   ├── rest/                         # Django Backend
+│   │   ├── rest/
+│   │   │   ├── settings.py          # Django configuration
+│   │   │   ├── urls.py              # URL routing
+│   │   │   ├── views.py             # API views
+│   │   │   ├── wsgi.py
+│   │   │   └── asgi.py
+│   │   ├── manage.py                # Django CLI
+│   │   ├── requirements.txt         # Python dependencies
+│   │   ├── Dockerfile              # Django container config
+│   │   └── .gitignore
+│   │
+│   └── requirements.txt             # Shared Python dependencies
+│
+├── docker-compose.yml               # Multi-container setup
+├── .gitignore                       # Git ignore rules
+├── README.md                        # This file
+└── .vscode/
+    ├── settings.json               # VS Code settings
+    └── launch.json                 # Debug configuration
+```
 
-# Instructions [IMPORTANT] 
-1. All React code should be implemented using [React hooks](https://reactjs.org/docs/hooks-intro.html) and should not use traditional stateful React components and component lifecycle method.
-2. Do not use Django's model, serializers or SQLite DB. Persist and retrieve all data from the mongo instance. A `db` instance is already present in `views.py`.
-3. Do not bypass the Docker setup. Submissions that do not have proper docker setup will be rejected.
-4. We are looking for developers who have strong fundamentals and can ramp up fast. We expect you to learn and grasp basic React Hooks/Mongo/Docker concepts on the fly.
-5. Do not fork this repository or submit your solution as a PR since this is a public repo and there are other candidates taking the same test. Send us a link to your repo privately.
-6. If you are able to complete the test, we will have a live walkthrough of your code and ask questions to check your understanding.
-7. The code for the actual solution is pretty easy. The code quality in your solution should be production-ready - error handling, abstractions, well-maintainable and modular code. If you're not aware, we recommend reading a bit about software design principles and applying them (both JS and Python). Here are some reading resources to get you started:
-   * https://kinsta.com/blog/python-object-oriented-programming/
-   * https://realpython.com/solid-principles-python/
-   * https://www.toptal.com/python/python-design-patterns
+## 🚀 Installation & Setup
+
+### Docker Setup
+
+```powershell
+# 1. Clone the repository
+git clone https://github.com/rahulmangla28/Adbrew_Assignment.git
+cd adb_test
+
+# 2. Build and start all services
+docker-compose up --build
+
+# 3. Wait for all services to start (check logs)
+# Frontend: http://localhost:3000
+# Backend API: http://localhost:8000
+# MongoDB: localhost:27017
+```
+
+## 🎯 Running the Application
+
+### With Docker 
+
+```powershell
+# Start all services
+docker-compose up
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+
+# Stop and remove volumes (clear data)
+docker-compose down -v
+```
+
+## 📡 API Documentation
+
+### Base URL
+```
+http://localhost:8000
+```
+
+### Endpoints
+
+#### GET /todos/
+Retrieve all TODO items from the database.
+
+**Request:**
+```http
+GET /todos/ HTTP/1.1
+Content-Type: application/json
+```
+
+**Response (200 OK):**
+```json
+[
+  {
+    "_id": "507f1f77bcf86cd799439011",
+    "description": "Buy groceries"
+  },
+  {
+    "_id": "507f1f77bcf86cd799439012",
+    "description": "Learn Docker"
+  }
+]
+```
+
+**Error Response (500):**
+```json
+{
+  "error": "Failed to fetch todos",
+  "details": "Error message"
+}
+```
+
+---
+
+#### POST /todos/
+Create a new TODO item.
+
+**Request:**
+```http
+POST /todos/ HTTP/1.1
+Content-Type: application/json
+
+{
+  "description": "Buy groceries"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+  "_id": "507f1f77bcf86cd799439011",
+  "description": "Buy groceries"
+}
+```
+
+**Error Responses:**
+
+400 Bad Request:
+```json
+{
+  "error": "Description field is required"
+}
+```
+
+500 Internal Server Error:
+```json
+{
+  "error": "Failed to create todo",
+  "details": "Error message"
+}
+```
+
+---
+
+## 💻 Usage Guide
+
+### 1. **Access the Application**
+
+Open your browser and navigate to:
+```
+http://localhost:3000
+```
+
+### 2. **View TODOs**
+
+The homepage displays all TODOs stored in MongoDB:
+- Initially shows "No TODOs yet. Create one to get started!"
+- Automatically loads all existing TODOs from the backend
+
+### 3. **Create a New TODO**
+
+1. Enter TODO description in the text input (e.g., "Buy groceries")
+2. Click "Add ToDo!" button
+3. Wait for confirmation (button shows "Adding...")
+4. Input clears automatically on success
+5. New TODO appears in the list instantly
+
+### 4. **Error Handling**
+
+- **Empty input**: Error message "Please enter a TODO description"
+- **Network error**: Error message displays with details
+- **Server error**: Error message from backend displayed
+- All errors are logged to browser console for debugging
+
+## 🧪 Testing
+
+### Manual Testing with Browser
+
+1. Open `http://localhost:3000`
+2. Test scenarios:
+   - Load page and verify TODOs fetch
+   - Create TODO with valid description
+   - Try submitting empty input (should show error)
+   - Create multiple TODOs and verify list updates
+   - Refresh page and verify data persists
+
+### API Testing with REST Client
+
+Create `test.http` in project root:
+
+```http
+@baseUrl = http://localhost:8000
+
+### Get all TODOs
+GET {{baseUrl}}/todos/
+Content-Type: application/json
+
+### Create a TODO
+POST {{baseUrl}}/todos/
+Content-Type: application/json
+
+{
+  "description": "Buy groceries"
+}
+
+### Create another TODO
+POST {{baseUrl}}/todos/
+Content-Type: application/json
+
+{
+  "description": "Learn Docker"
+}
+
+### Create TODO with empty description (should fail)
+POST {{baseUrl}}/todos/
+Content-Type: application/json
+
+{
+  "description": ""
+}
+```
+
+In VS Code with REST Client extension:
+- Right-click any request → "Send Request"
+- View response in sidebar
+
+### cURL Testing
+
+```powershell
+# Get all TODOs
+curl -X GET http://localhost:8000/todos/
+
+# Create TODO
+curl -X POST http://localhost:8000/todos/ `
+  -H "Content-Type: application/json" `
+  -d '{"description":"Test TODO"}'
+```
+
+### Unit Testing (Optional)
+
+```powershell
+# Run React tests
+cd src/app
+npm test
+
+# Run Django tests
+cd src/rest
+python manage.py test
+```
+
+## 🗄️ Database Management
+
+### View Data in MongoDB
+
+#### Using mongosh in Docker
+
+```powershell
+# Access MongoDB shell
+docker exec -it mongo mongosh
+
+# Inside mongosh:
+use test_db
+show collections
+db.todos.find().pretty()
+db.todos.count()
+exit
+```
+
+### Clear Database
+
+```powershell
+# Drop only todos collection
+docker exec -it mongo mongosh --eval "use test_db; db.todos.drop();"
+
+# Drop entire database
+docker exec -it mongo mongosh --eval "use test_db; db.dropDatabase();"
+
+# Clear all volumes (Docker)
+docker-compose down -v
+```
+
+### Backup Database
+
+```powershell
+# Create backup
+docker exec mongo mongodump --db test_db --out /backup
+
+# Restore backup
+docker exec mongo mongorestore /backup
+```
+
+## 📝 File Descriptions
+
+### Frontend
+
+**`src/app/src/App.js`**
+- Main React component
+- Manages TODO list and form state
+- Handles API calls to backend
+- Error handling and loading states
+
+**`src/app/src/App.css`**
+- Responsive styling
+- Animations and transitions
+- Mobile-first design
+- Accessibility compliance
+
+### Backend
+
+**`src/rest/rest/views.py`**
+- `TodoListView` - Handles GET (list) and POST (create)
+- MongoDB integration
+- Request validation
+- Error handling
+
+**`src/rest/rest/urls.py`**
+- URL routing configuration
+- Maps endpoints to views
+
+**`src/rest/rest/settings.py`**
+- Django configuration
+- Database configuration
+- Installed apps
+
+## 🚢 Deployment
+
+### Using Docker in Production
+
+```powershell
+# Build for production
+docker-compose -f docker-compose.yml up -d
+
+# Check status
+docker-compose ps
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+### Environment Variables
+
+Create `.env` file in root:
+
+```
+MONGO_HOST=mongo
+MONGO_PORT=27017
+DJANGO_DEBUG=False
+ALLOWED_HOSTS=localhost,127.0.0.1
+```
